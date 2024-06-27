@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 public class Point
-{ 
+{
     public Vector3Int arrayPos;
     public Vector3 worldPos;
     public float value;
     public Vector4 pointData;
-    public float surfaceCutoff;
+    public float surfaceCutoff
     public bool inGround;
 
     public Point(Vector3Int arrayPos, Vector3 worldPos, float value, float surfaceCutoff, Vector4 pointData)
