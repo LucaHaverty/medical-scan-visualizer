@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public static class LookupTables
-{
+{ 
     public static int[,] triangulation = new int[256, 16] {
      { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
      { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
@@ -261,16 +261,6 @@ public static class LookupTables
      { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
  };
 
-    public static Vector3Int[] corners = {
-            new Vector3Int(0, 0, 0), new Vector3Int(1, 0, 0), new Vector3Int(1, 0, 1), new Vector3Int(0, 0, 1),
-            new Vector3Int(0, 1, 0), new Vector3Int(1, 1, 0), new Vector3Int(1, 1, 1), new Vector3Int(0, 1, 1)
-        };
-
-    public static Vector3[] inbetweens = {
-            new Vector3(0.5f, 0, 0), new Vector3(1, 0, 0.5f), new Vector3(0.5f, 0, 1), new Vector3(0, 0, 0.5f),
-            new Vector3(0.5f, 1, 0), new Vector3(1, 1, 0.5f),  new Vector3(0.5f, 1, 1), new Vector3(0, 1, 0.5f),
-            new Vector3(0, 0.5f, 0), new Vector3(1, 0.5f, 0), new Vector3(1, 0.5f, 1), new Vector3(0, 0.5f, 1),
-        };
 
     public static int[] inBetweenPointsOne = {
             1, 1, 2, 0, 4, 5, 7, 4, 0, 1, 2, 3
@@ -278,5 +268,17 @@ public static class LookupTables
 
     public static int[] inBetweenPointsTwo = {
             0, 2, 3, 3, 5, 6, 6, 7, 4, 5, 6, 7
+        };
+
+
+public static Vector3Int[] corners = {
+            new Vector3Int(0, 0, 0), new Vector3Int(1, 0, 0), new Vector3Int(1, 0, 1), new Vector3Int(0, 0, 1),
+            new Vector3Int(0, 1, 0), new Vector3Int(1, 1, 0), new Vector3Int(1, 1, 1), new Vector3Int(0, 1, 1)
+        };
+
+public static Vector3[] inbetweens = {
+            new Vector3(0.5f, 0, 0), new Vector3(1, 0, 0.5f), new Vector3(0.5f, 0, 1), new Vector3(0, 0, 0.5f),
+            new Vector3(0.5f, 1, 0), new Vector3(1, 1, 0.5f),  new Vector3(0.5f, 1, 1), new Vector3(0, 1, 0.5f),
+            new Vector3(0, 0.5f, 0), new Vector3(1, 0.5f, 0), new Vector3(1, 0.5f, 1), new Vector3(0, 0.5f, 1),
         };
 }

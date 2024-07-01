@@ -1,25 +1,34 @@
-import { defineConfig } from 'vitest/config'
-import * as path from 'path'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from "vitest/config"
+import * as path from "path"
+import react from "@vitejs/plugin-react-swc"
 
-const basePath = '/fission/'
+const basePath = "/web/"
 const serverPort = 3000
 const dockerServerPort = 3003
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), /* viteSingleFile() */],
+    plugins: [react() /* viteSingleFile() */],
     resolve: {
         alias: [
-            { find: '@/components', replacement: path.resolve(__dirname, 'src', 'ui', 'components') },
-            { find: '@/modals', replacement: path.resolve(__dirname, 'src', 'ui', 'modals') },
-            { find: '@/panels', replacement: path.resolve(__dirname, 'src', 'ui', 'panels') },
-            { find: '@', replacement: path.resolve(__dirname, 'src') }
-        ]
+            {
+                find: "@/components",
+                replacement: path.resolve(__dirname, "src", "ui", "components"),
+            },
+            {
+                find: "@/modals",
+                replacement: path.resolve(__dirname, "src", "ui", "modals"),
+            },
+            {
+                find: "@/panels",
+                replacement: path.resolve(__dirname, "src", "ui", "panels"),
+            },
+            { find: "@", replacement: path.resolve(__dirname, "src") },
+        ],
     },
     test: {
         globals: true,
-        environment: 'jsdom'
+        environment: "jsdom",
     },
     server: {
         // this ensures that the browser opens upon server start
@@ -28,21 +37,22 @@ export default defineConfig({
         port: serverPort,
         cors: false,
         proxy: {
-            '/api/mira': {
+            "/api/mira": {
                 target: `http://localhost:${serverPort}${basePath}`,
                 changeOrigin: true,
                 secure: false,
-                rewrite: (path) => path.replace(/^\/api\/mira/, '/Downloadables/Mira')
+                rewrite: path =>
+                    path.replace(/^\/api\/mira/, "/Downloadables/Mira"),
             },
-            '/api/auth': {
+            "/api/auth": {
                 target: `http://localhost:${dockerServerPort}/`,
                 changeOrigin: true,
-                secure: false
-            }
+                secure: false,
+            },
         },
     },
     build: {
-        target: 'esnext',
+        target: "esnext",
     },
-    base: basePath
+    base: basePath,
 })

@@ -3,28 +3,32 @@ using Dicom;
 using Dicom.Imaging;
 using UnityEngine;
 
-public class DataParser : MonoBehaviour {
+public class DataParser : MonoBehaviour
+{
     const string dicomDirectory = "Assets/ScanData/Circle of Willis";
     public static DataParser Instance;
-    
+
     // Get all DICOM files in the directory
     string[] dicomFiles = Directory.GetFiles(dicomDirectory, "*.dcm");
 
     public float[,,] allData;
 
-    private void Awake() {
+    private void Awake()
+    {
         Instance = this;
-        
+
         ReadFiles();
     }
 
-    private void ReadFiles() {
+    private void ReadFiles()
+    {
         // Look at first file for width and height
         var firstFile = DicomFile.Open(dicomFiles[0]);
         allData = new float[firstFile.Dataset.Get<int>(DicomTag.Columns) / 2,
             firstFile.Dataset.Get<int>(DicomTag.Rows) / 2, dicomFiles.Length];
 
-        for (int i = 0; i < dicomFiles.Length; i++) {
+        for (int i = 0; i < dicomFiles.Length; i++)
+        {
             // Load the DICOM file
             var dicomFile = DicomFile.Open(dicomFiles[i]);
 
@@ -37,8 +41,10 @@ public class DataParser : MonoBehaviour {
             int width = dicomFile.Dataset.Get<int>(DicomTag.Columns);
             int height = dicomFile.Dataset.Get<int>(DicomTag.Rows);
 
-            for (int y = 0; y < height/2; y++) {
-                for (int x = 0; x < width/2; x++) {
+            for (int y = 0; y < height / 2; y++)
+            {
+                for (int x = 0; x < width / 2; x++)
+                {
                     allData[x, y, i] = pixelBytes[y * height * 4 + x * 4] / 255.0f;
                 }
             }
