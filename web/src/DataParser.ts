@@ -1,40 +1,66 @@
-import { useRef } from "react"
+import * as dicomParser from "dicom-parser"
 
 class DataParser {
-    public static SCAN_DATA: number[][][] = []
+    public static PARSED_DATA: number[][][]
 
-    public static async loadData() {
-        console.log("Loading data...")
-        // //await this.readFileFromPath("/scan_data/Circle of Willis/1-005.dcm")
-        // await fetch("/test.json")
-        //     .then(x => x.json())
-        //     .then(x => {
-        //         console.log(x)
-        //     })
-        //this.readFileFromPath("/test.json")
+    public static async parseData(folder: FileList): Promise<number[][][]> {
+        const data: number[][][] = new Array(folder.length)
 
-        const fileUploadRef = useRef<HTMLInputElement>(null)
-
-        if (fileUploadRef.current) {
-            fileUploadRef.current.click()
+        for (let layer = 0; layer < folder.length; layer++) {
+            await DataParser.parseLayer(folder[layer]).then(layerData => {
+                data[layer] = layerData
+            })
         }
+
+        return data
     }
 
-    private static async readFileFromPath(filePath: string) {
-        try {
-            const response = await fetch(filePath)
-            if (!response.ok) {
-                throw new Error("Network response was not ok")
+    public static parseLayer(file: File): Promise<number[][]> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+            const arrayBuffer = e.target?.result as ArrayBuffer;
+            const byteArray = new Uint8Array(arrayBuffer);
+
+            try {
+                const dataSet = dicomParser.parseDicom(byteArray);
+                const pixelDataElement = dataSet.elements.x7fe00010;
+                const pixelData = new Uint16Array(
+                    dataSet.byteArray.buffer,
+                    pixelDataElement.dataOffset,
+                    pixelDataElement.length / 2
+                );
+
+                const width = dataSet.uint16("x00280011");
+                const height = dataSet.uint16("x00280010");
+
+                if (!width) throw new Error("No width found in DICOM file.");
+                if (!height) throw new Error("No height found in DICOM file.");
+
+                const data: number[][] = Array.from({ length: height }, () => new Array(width));
+
+                for (let h = 0; h < height; h++) {
+                    for (let w = 0; w < width; w++) {
+                        let value = pixelData[h * width + w];
+                        data[h][w] = value;
+                    }
+                }
+
+                resolve(data);
+            } catch (error) {
+                reject(new Error("Error parsing DICOM file: " + error));
             }
-            const fileContent = await response.text()
-            console.log("File content:", fileContent)
-            // Process the file content as needed
-            return fileContent
-        } catch (error) {
-            console.error("Error fetching or reading file:", error)
-            return null
-        }
-    }
+        };
+
+        reader.onerror = (error) => {
+            reject(new Error("File reading failed: " + error));
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
 }
+}
+    
 
 export default DataParser

@@ -1,10 +1,11 @@
 import { Vector3 } from "three"
-import Point from "./Point"
+import Point3d from "./Point3d"
 import Settings from "./Settings"
+import DataParser from "./DataParser"
 
-class Grid {
+class Grid3d {
     public gridSize: Vector3
-    public points: Point[][][]
+    public points: Point3d[][][]
 
     private _worldPos: Vector3
     private _pointSpacing: number
@@ -26,7 +27,6 @@ class Grid {
                     .fill(null)
                     .map(() => Array(gridSize.z).fill(0))
             )
-        console.log(this.points)
 
         for (let x = 0; x < gridSize.x; x++) {
             for (let y = 0; y < gridSize.y; y++) {
@@ -37,14 +37,13 @@ class Grid {
                         z * sampleRate
                     )
 
-                    // const pointValue: number =
-                    //     1 -
-                    //     DataParser.SCAN_DATA[x * sampleRate][z * sampleRate][
-                    //         y * sampleRate
-                    //     ]
-                    const pointValue = Math.random()
+                    // TODO: sample rate
+                    let pointValue: number =
+                        1 - DataParser.PARSED_DATA[x][y][z] / 255.0
 
-                    this.points[x][y][z] = new Point(
+                    pointValue = Math.random()
+
+                    this.points[x][y][z] = new Point3d(
                         new Vector3(x, y, z),
                         pointWorldPos,
                         pointValue,
@@ -53,6 +52,7 @@ class Grid {
                 }
             }
         }
+        console.log("made grid")
     }
 
     public calculateWorldPosition(
@@ -68,7 +68,7 @@ class Grid {
     }
 
     // Returns NULL if the closest point is outside of the grid
-    public findClosePoint(worldPos: Vector3): Point | null {
+    public findClosePoint(worldPos: Vector3): Point3d | null {
         const x = Math.floor(
             (worldPos.x - this._worldPos.x) / this._pointSpacing
         )
@@ -93,4 +93,4 @@ class Grid {
     }
 }
 
-export default Grid
+export default Grid3d

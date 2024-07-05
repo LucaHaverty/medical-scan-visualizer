@@ -1,7 +1,7 @@
 import * as THREE from "three"
 import { Vector3, Vector4 } from "three"
 
-import Grid from "./Grid"
+import Grid3d from "./Grid3d"
 import Settings from "./Settings"
 import LookupTables from "./LookupTables"
 
@@ -12,7 +12,7 @@ type Triangle = {
 }
 
 class MeshGenerator {
-    public static GenerateMesh(grid: Grid) {
+    public static GenerateMesh(grid: Grid3d) {
         const vertices: number[] = []
         const triangles: number[] = []
 

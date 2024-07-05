@@ -1,28 +1,28 @@
 import * as THREE from "three"
-import Grid from "./Grid"
+import Grid3d from "./Grid3d"
 import { Vector3 } from "three"
 import MeshGenerator from "./MeshGenerator"
 
 class SceneRenderer {
-    static scene: THREE.Scene
-    static camera: THREE.PerspectiveCamera
-    static renderer: THREE.WebGLRenderer
+    static _scene: THREE.Scene
+    static _camera: THREE.PerspectiveCamera
+    static _renderer: THREE.WebGLRenderer
 
     public static setup() {
-        this.camera = new THREE.PerspectiveCamera(
+        this._camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
         )
-        this.camera.position.z = 5
+        this._camera.position.z = 5
 
-        this.scene = new THREE.Scene()
+        this._scene = new THREE.Scene()
 
-        this.renderer = new THREE.WebGLRenderer()
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
+        this._renderer = new THREE.WebGLRenderer()
+        this._renderer.setSize(window.innerWidth, window.innerHeight)
         //this.renderer.setAnimationLoop(animate)
-        document.body.appendChild(this.renderer.domElement)
+        document.body.appendChild(this._renderer.domElement)
     }
 
     public static createTestCube() {
@@ -111,18 +111,21 @@ class SceneRenderer {
         // Create a mesh with the geometry and material, then add it to the scene
         const customMesh = new THREE.Mesh(geometry, material)
 
-        SceneRenderer.scene.add(customMesh)
+        SceneRenderer._scene.add(customMesh)
+
+        this._renderer.render(this._scene, this._camera)
     }
 
     public static renderScan = () => {
-        const grid = new Grid(
+        const grid = new Grid3d(
             new Vector3(0, 0, 0),
-            new THREE.Vector3(512, 512, 512),
+            new THREE.Vector3(10, 512, 512),
             1
         )
         const mesh = MeshGenerator.GenerateMesh(grid)
 
-        SceneRenderer.scene.add(mesh)
+        SceneRenderer._scene.add(mesh)
+        this._renderer.render(this._scene, this._camera)
     }
 
     // Position the camera
