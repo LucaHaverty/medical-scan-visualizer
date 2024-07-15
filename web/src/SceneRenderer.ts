@@ -122,7 +122,7 @@ class SceneRenderer {
             new THREE.Vector3(10, 512, 512),
             1
         )
-        const mesh = MeshGenerator.GenerateMesh(grid)
+        const mesh = MeshGenerator.GenerateMesh3(grid)
 
         SceneRenderer._scene.add(mesh)
         this._renderer.render(this._scene, this._camera)

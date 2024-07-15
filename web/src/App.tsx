@@ -3,6 +3,10 @@ import Button from "@mui/material/Button"
 import { Slider, Stack, Typography } from "@mui/material"
 import DataParser from "./DataParser"
 import SceneRenderer from "./SceneRenderer"
+import Grid2d from "./Grid2d"
+import { Vector2 } from "three"
+import MeshGenerator from "./MeshGenerator"
+import Settings from "./Settings"
 
 const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
 if (!canvas) throw new Error("no canvas")
@@ -63,20 +67,37 @@ const App = () => {
             }
         }
 
+        Settings.SURFACE_CUTOFF = 1 - threshold[0]
+        const grid = new Grid2d(new Vector2(0,0), new Vector2(512, 512), 1, fileIndex)
+        const edgePoints = MeshGenerator.GenerateMesh2(grid)[1]
+
         ctx!.putImageData(imageData, 0, 0)
+        ctx.beginPath()
+        
+        for (let i = 0; i < edgePoints.length; i += 2) {
+            ctx.moveTo(edgePoints[i][0], edgePoints[i][1])
+            ctx.lineTo(edgePoints[i+1][0], edgePoints[i+1][1])
+        }
+
+        // ctx.moveTo(30, 30)
+        // ctx.lineTo(100, 100)
+        // ctx.moveTo(60, 80)
+        // ctx.lineTo(200, 200)
+
+
+        ctx.strokeStyle = "#ff0000"
+        ctx.stroke()
     }
 
     if (parsedData != undefined) renderImage()
 
     const onInputChanged = (e: ChangeEvent<HTMLInputElement>) => {
-        console.log("input changed")
         if (e.target.files) {
             if (e.target.files == undefined) throw new Error("Selected folder no exist!!!")
 
             DataParser.parseData(e.target.files).then(data => {
                 setParsedData(data)
                 DataParser.PARSED_DATA = data
-                console.log(DataParser.PARSED_DATA[0][250][250])
             })
         }
         else console.log("nope")

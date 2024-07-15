@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from "three"
+import { Vector2 } from "three"
 import Settings from "./Settings"
 import DataParser from "./DataParser"
 import Point2d from "./Point2d"
@@ -22,8 +22,9 @@ class Grid2d {
         // TODO: Load sample rate from some sort of settings
         var sampleRate = Settings.PIXEL_SAMPLE_RATE
 
-        gridSize = gridSize.multiplyScalar(sampleRate)
+        gridSize = gridSize.divideScalar(sampleRate).floor()
         this.gridSize = gridSize
+        this.gridSize = new Vector2(this.gridSize.x, this.gridSize.y)
 
         this.points = Array(gridSize.x)
             .fill(null)
@@ -38,9 +39,9 @@ class Grid2d {
 
                 // TODO: sample rate
                 let pointValue: number =
-                    1 - DataParser.PARSED_DATA[layer][x][y] / 255.0
+                    1 - DataParser.PARSED_DATA[layer][x*sampleRate][y*sampleRate] / 255.0
 
-                pointValue = Math.random()
+                //pointValue = Math.random()
 
                 this.points[x][y] = new Point2d(
                     new Vector2(x, y),
