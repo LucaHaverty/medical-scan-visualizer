@@ -1,7 +1,6 @@
 import { Vector3 } from "three"
 import Point3d from "./Point3d"
-import Settings from "./Settings"
-import DataParser from "./DataParser"
+import Settings from "../Settings"
 
 class Grid3d {
     public gridSize: Vector3
@@ -11,11 +10,13 @@ class Grid3d {
     private _pointSpacing: number
 
     constructor(worldPos: Vector3, gridSize: Vector3, pointSpacing: number) {
+        console.log(gridSize.x)
+
         this._worldPos = worldPos
         this._pointSpacing = pointSpacing
 
         // TODO: Load sample rate from some sort of settings
-        var sampleRate = Settings.PIXEL_SAMPLE_RATE
+        const sampleRate = Settings.PIXEL_SAMPLE_RATE
 
         gridSize = gridSize.multiplyScalar(sampleRate)
         this.gridSize = gridSize
@@ -38,10 +39,10 @@ class Grid3d {
                     )
 
                     // TODO: sample rate
-                    let pointValue: number =
-                        1 - DataParser.PARSED_DATA[x][y][z] / 255.0
+                    /* let pointValue: number =
+                        1 - DataParser.PARSED_DATA[x][y][z] / 255.0 */
 
-                    pointValue = Math.random()
+                    const pointValue = Math.random()
 
                     this.points[x][y][z] = new Point3d(
                         new Vector3(x, y, z),

@@ -1,7 +1,7 @@
 import * as THREE from "three"
-import Grid3d from "./Grid3d"
+import Grid3d from "./visual_generation/Grid3d"
 import { Vector3 } from "three"
-import MeshGenerator from "./MeshGenerator"
+import MeshGenerator from "./visual_generation/MeshGenerator"
 
 class SceneRenderer {
     static _scene: THREE.Scene
@@ -16,6 +16,8 @@ class SceneRenderer {
             1000
         )
         this._camera.position.z = 5
+        this._camera.position.x = -100
+        this._camera.setRotationFromEuler(new THREE.Euler(90, -0.6, 0))
 
         this._scene = new THREE.Scene()
 
@@ -117,10 +119,11 @@ class SceneRenderer {
     }
 
     public static renderScan = () => {
+        console.log("test")
         const grid = new Grid3d(
             new Vector3(0, 0, 0),
-            new THREE.Vector3(10, 512, 512),
-            1
+            new Vector3(512, 512, 512),
+            100
         )
         const mesh = MeshGenerator.GenerateMesh3(grid)
 

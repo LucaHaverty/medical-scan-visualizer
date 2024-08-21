@@ -1,6 +1,6 @@
 import { Vector2 } from "three"
-import Settings from "./Settings"
-import DataParser from "./DataParser"
+import Settings from "../Settings"
+import DataParser from "../DataParser"
 import Point2d from "./Point2d"
 
 class Grid2d {
@@ -20,7 +20,7 @@ class Grid2d {
         this._pointSpacing = pointSpacing
 
         // TODO: Load sample rate from some sort of settings
-        var sampleRate = Settings.PIXEL_SAMPLE_RATE
+        const sampleRate = Settings.PIXEL_SAMPLE_RATE
 
         gridSize = gridSize.divideScalar(sampleRate).floor()
         this.gridSize = gridSize
@@ -38,8 +38,12 @@ class Grid2d {
                 )
 
                 // TODO: sample rate
-                let pointValue: number =
-                    1 - DataParser.PARSED_DATA[layer][x*sampleRate][y*sampleRate] / 255.0
+                const pointValue: number =
+                    1 -
+                    DataParser.PARSED_DATA[layer][x * sampleRate][
+                        y * sampleRate
+                    ] /
+                        255.0
 
                 //pointValue = Math.random()
 
