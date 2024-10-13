@@ -19,7 +19,6 @@ const RenderConfiguration: FC<RenderConfigurationProps> = ({
     )
 
     useEffect(() => {
-        console.log("apply")
         applySettings({ threshold: threshold, imageLayer: imageLayer })
     }, [imageLayer, threshold, applySettings])
 
@@ -36,7 +35,7 @@ const RenderConfiguration: FC<RenderConfigurationProps> = ({
             <Slider
                 aria-label="Volume"
                 defaultValue={0}
-                max={layerCount}
+                max={layerCount - 1}
                 step={1}
                 onChange={(_, value) => setImageLayer(value as number)}
                 valueLabelDisplay="auto"

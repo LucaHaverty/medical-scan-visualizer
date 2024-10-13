@@ -4,12 +4,27 @@ import { Stack, Typography } from "@mui/material"
 import DataParser from "./DataParser"
 import SceneRenderer from "./SceneRenderer"
 import Grid2d from "./visual_generation/Grid2d"
-import { Vector2 } from "three"
+import {
+    Vector2,
+    Scene,
+    PerspectiveCamera,
+    WebGLRenderer,
+    Mesh,
+    PlaneGeometry,
+    MeshBasicMaterial,
+    WebGLRenderTarget,
+    OrthographicCamera,
+    FloatType,
+    RGBAFormat,
+    ShaderMaterial,
+} from "three"
+
 import MeshGenerator from "./visual_generation/MeshGenerator"
 import Settings from "./Settings"
 import FileSelection from "./ui/FileSelection"
 import RenderConfiguration from "./ui/RenderConfiguration"
 import { RenderSettings } from "./BrainTypes"
+import TestShader from "./TestShader"
 
 const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
 if (!canvas) throw new Error("no canvas")
@@ -77,8 +92,6 @@ const App = () => {
         ctx.stroke()
     }
 
-    //if (parsedData != undefined) renderImage()
-
     const processData = (files: FileList) => {
         DataParser.parseData(files).then(data => {
             setParsedData(data)
@@ -88,9 +101,10 @@ const App = () => {
 
     return (
         <>
+            <TestShader />
             <Stack direction={"column"} maxWidth={"20vw"} alignItems="stretch">
                 <FileSelection setFiles={processData} />
-                {parsedData ? (
+                {parsedData && (
                     <>
                         <Typography>{`Loaded ${parsedData.length} files`}</Typography>
                         <Stack
@@ -109,18 +123,14 @@ const App = () => {
                             <RenderConfiguration
                                 applySettings={settings => {
                                     renderImage(settings)
-                                    console.log(settings.threshold)
                                 }}
                                 layerCount={parsedData.length}
                             />
                         </Stack>
                     </>
-                ) : (
-                    <></>
                 )}
             </Stack>
         </>
     )
 }
-
 export default App

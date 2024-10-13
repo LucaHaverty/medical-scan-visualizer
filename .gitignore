@@ -64,6 +64,9 @@ sysinfo.txt
 *.app
 
 *.dcm
+*.dcm.meta
+
+/dicom-data
 
 # Crashlytics generated file
 crashlytics-build.properties

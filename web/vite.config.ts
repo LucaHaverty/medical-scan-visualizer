@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config"
 import * as path from "path"
 import react from "@vitejs/plugin-react-swc"
+import glsl from "vite-plugin-glsl"
 
 const basePath = "/web/"
 const serverPort = 3000
@@ -8,7 +9,7 @@ const dockerServerPort = 3003
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react() /* viteSingleFile() */],
+    plugins: [react(), glsl() /* viteSingleFile() */],
     resolve: {
         alias: [
             {
