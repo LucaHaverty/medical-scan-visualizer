@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material"
+import { Button } from "@mui/material"
 import { ChangeEvent, FC, useRef } from "react"
 
 // Extend the JSX Intrinsic Elements for the 'input' tag
@@ -33,7 +33,6 @@ const FileSelection: FC<FileSelectionProps> = ({ setFiles }) => {
 
     return (
         <>
-            <Typography color="white">Select Files</Typography>
             <input
                 ref={fileUploadRef}
                 onChange={onInputChanged}
@@ -44,7 +43,7 @@ const FileSelection: FC<FileSelectionProps> = ({ setFiles }) => {
                 multiple
             />
             <Button variant="contained" onClick={uploadClicked}>
-                Select File
+                Select Folder
             </Button>
         </>
     )

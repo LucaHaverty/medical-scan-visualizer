@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import {
     Scene,
     PerspectiveCamera,
@@ -6,14 +6,62 @@ import {
     Mesh,
     PlaneGeometry,
     ShaderMaterial,
+    Vector3,
+    Data3DTexture,
+    RedFormat,
+    FloatType,
 } from "three"
 
 // Import shaders as strings
 import vertexShader from "./shaders/vertexShader.glsl"
 import fragmentShader from "./shaders/fragmentShader.glsl"
 
-const TestShader = () => {
+const TestShader: React.FC = () => {
+    const rendererRef = useRef<WebGLRenderer | null>(null)
+
+    // Function to generate a 3D grid of sample data
+    const generateGridData = (
+        width: number = 64,
+        height: number = 64,
+        depth: number = 64
+    ): Float32Array => {
+        const gridSize = width * height * depth
+        const gridData = new Float32Array(gridSize)
+
+        // Create more complex 3D noise
+        for (let z = 0; z < depth; z++) {
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = x + y * width + z * width * height
+                    // Combine noise and density
+                    gridData[index] = Math.random()
+                }
+            }
+        }
+
+        return gridData
+    }
+
     useEffect(() => {
+        // Grid dimensions (can now be much larger)
+        const gridWidth = 256
+        const gridHeight = 256
+        const gridDepth = 256
+
+        // Generate grid data
+        const gridData = generateGridData(gridWidth, gridHeight, gridDepth)
+
+        // Create 3D texture
+        const texture = new Data3DTexture(
+            gridData,
+            gridWidth,
+            gridHeight,
+            gridDepth
+        )
+        texture.format = RedFormat
+        texture.type = FloatType
+        texture.needsUpdate = true
+
         // Basic setup
         const scene = new Scene()
         const camera = new PerspectiveCamera(
@@ -23,38 +71,42 @@ const TestShader = () => {
             1000
         )
         const renderer = new WebGLRenderer()
+        rendererRef.current = renderer
+
         renderer.setSize(window.innerWidth, window.innerHeight)
         document.body.appendChild(renderer.domElement)
 
-        // Step 1: Create a ShaderMaterial with the imported vertex and fragment shaders
+        // Create a ShaderMaterial with the imported vertex and fragment shaders
         const material = new ShaderMaterial({
-            vertexShader, // Pass the imported vertex shader
-            fragmentShader, // Pass the imported fragment shader
+            vertexShader,
+            fragmentShader,
+            uniforms: {
+                time: { value: 0.0 },
+                gridDimensions: {
+                    value: new Vector3(gridWidth, gridHeight, gridDepth),
+                },
+                gridTexture: { value: texture },
+            },
         })
 
-        // Step 2: Create a plane geometry to apply the shader material
+        // Create a plane geometry to apply the shader material
         const geometry = new PlaneGeometry(5, 5)
         const plane = new Mesh(geometry, material)
         scene.add(plane)
 
         camera.position.z = 5
 
-        // Step 3: Animation loop
-        const animate = () => {
-            requestAnimationFrame(animate)
-            plane.rotation.x += 0.01
-            plane.rotation.y += 0.01
-            renderer.render(scene, camera)
-        }
-        //animate()
         renderer.render(scene, camera)
 
+        // Cleanup
         return () => {
             document.body.removeChild(renderer.domElement)
+            renderer.dispose()
+            texture.dispose()
         }
     }, [])
 
-    return <div />
+    return null
 }
 
 export default TestShader

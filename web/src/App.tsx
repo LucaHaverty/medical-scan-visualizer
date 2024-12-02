@@ -1,23 +1,10 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Button from "@mui/material/Button"
-import { Stack, Typography } from "@mui/material"
+import { Box, Stack, Typography } from "@mui/material"
 import DataParser from "./DataParser"
 import SceneRenderer from "./SceneRenderer"
 import Grid2d from "./visual_generation/Grid2d"
-import {
-    Vector2,
-    Scene,
-    PerspectiveCamera,
-    WebGLRenderer,
-    Mesh,
-    PlaneGeometry,
-    MeshBasicMaterial,
-    WebGLRenderTarget,
-    OrthographicCamera,
-    FloatType,
-    RGBAFormat,
-    ShaderMaterial,
-} from "three"
+import { Vector2 } from "three"
 
 import MeshGenerator from "./visual_generation/MeshGenerator"
 import Settings from "./Settings"
@@ -26,13 +13,11 @@ import RenderConfiguration from "./ui/RenderConfiguration"
 import { RenderSettings } from "./BrainTypes"
 import TestShader from "./TestShader"
 
-const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
-if (!canvas) throw new Error("no canvas")
-
-const ctx = canvas.getContext("2d")
-if (!ctx) throw new Error("no ctx")
+// const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
+// if (!canvas) throw new Error("no canvas")
 
 const App = () => {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const [parsedData, setParsedData] = useState<number[][][] | undefined>(
         undefined
     )
@@ -40,12 +25,17 @@ const App = () => {
     const renderImage = (settings: RenderSettings) => {
         if (parsedData == undefined) return
 
+        if (canvasRef.current == undefined) throw new Error("No Canvas")
+
+        const ctx = canvasRef.current.getContext("2d")
+        if (!ctx) throw new Error("no ctx")
+
         const data = parsedData[settings.imageLayer]
         const height = data.length
         const width = data[0].length
 
-        canvas.width = width
-        canvas.height = height
+        canvasRef.current.width = width
+        canvasRef.current.height = height
         const imageData = ctx!.createImageData(width, height)
         for (let h = 0; h < height; h++) {
             for (let w = 0; w < width; w++) {
@@ -87,7 +77,7 @@ const App = () => {
             ctx.lineTo(edgePoints[i + 1][0], edgePoints[i + 1][1])
         }
 
-        ctx.strokeStyle = "#ff0000"
+        ctx.strokeStyle = "#CC0099"
         ctx.lineWidth = 2
         ctx.stroke()
     }
@@ -100,37 +90,41 @@ const App = () => {
     }
 
     return (
-        <>
+        <Box
+            display="flex"
+            flexDirection={"column"}
+            maxWidth={"45vw"}
+            alignItems={"flex-start"}
+            alignSelf={"center"}
+            margin={"0 auto"}
+        >
             <TestShader />
-            <Stack direction={"column"} maxWidth={"20vw"} alignItems="stretch">
-                <FileSelection setFiles={processData} />
-                {parsedData && (
-                    <>
-                        <Typography>{`Loaded ${parsedData.length} files`}</Typography>
-                        <Stack
-                            direction={"column"}
-                            alignItems="stretch"
-                            spacing=""
+            <canvas ref={canvasRef} />
+            {parsedData ? (
+                <Box width="70%">
+                    <Typography>{`Loaded ${parsedData!.length} files`}</Typography>
+                    <Stack direction={"column"} alignItems="stretch" spacing="">
+                        <RenderConfiguration
+                            applySettings={settings => {
+                                renderImage(settings)
+                            }}
+                            layerCount={parsedData!.length}
+                        />
+                        <Box height="15px"></Box>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                SceneRenderer.renderScan()
+                            }}
                         >
-                            <Button
-                                variant="contained"
-                                onClick={() => {
-                                    SceneRenderer.renderScan()
-                                }}
-                            >
-                                Generate Model
-                            </Button>
-                            <RenderConfiguration
-                                applySettings={settings => {
-                                    renderImage(settings)
-                                }}
-                                layerCount={parsedData.length}
-                            />
-                        </Stack>
-                    </>
-                )}
-            </Stack>
-        </>
+                            Generate 3d model
+                        </Button>
+                    </Stack>
+                </Box>
+            ) : (
+                <FileSelection setFiles={processData} />
+            )}
+        </Box>
     )
 }
 export default App

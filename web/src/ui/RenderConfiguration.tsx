@@ -1,5 +1,5 @@
 import { defaultBrainSettings, RenderSettings } from "@/BrainTypes"
-import { Slider } from "@mui/material"
+import { Box, Slider, Typography } from "@mui/material"
 import { FC, useEffect, useState } from "react"
 
 interface RenderConfigurationProps {
@@ -24,16 +24,17 @@ const RenderConfiguration: FC<RenderConfigurationProps> = ({
 
     return (
         <>
+            <Typography color={"white"}>Color Threshold</Typography>
             <Slider
-                getAriaLabel={() => "Volume"}
                 defaultValue={[0.4, 0.6]}
                 max={1}
                 step={0.01}
                 onChange={(_, value) => setThreshold(value as number[])}
                 valueLabelDisplay="auto"
             />
+            <Box height="15px"></Box>
+            <Typography color={"white"}>Layer</Typography>
             <Slider
-                aria-label="Volume"
                 defaultValue={0}
                 max={layerCount - 1}
                 step={1}
