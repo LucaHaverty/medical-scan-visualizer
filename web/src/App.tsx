@@ -1,17 +1,15 @@
 import { useRef, useState } from "react"
-import Button from "@mui/material/Button"
 import { Box, Stack, Typography } from "@mui/material"
-import DataParser from "./DataParser"
-import SceneRenderer from "./SceneRenderer"
-import Grid2d from "./visual_generation/Grid2d"
+import DataParser from "./data_input/DataParser"
+import Grid2d from "./rendering/2d/marching_squares/Grid2d"
 import { Vector2 } from "three"
 
-import MeshGenerator from "./visual_generation/MeshGenerator"
+import MeshGenerator from "./rendering/2d/marching_squares/MeshGenerator"
 import Settings from "./Settings"
-import FileSelection from "./ui/FileSelection"
-import RenderConfiguration from "./ui/RenderConfiguration"
+import FileSelection from "./data_input/FileSelection"
+import RenderConfiguration from "./data_input/RenderConfiguration"
 import { RenderSettings } from "./BrainTypes"
-import TestShader from "./TestShader"
+import Render3d from "./rendering/3d/Render3d"
 
 // const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
 // if (!canvas) throw new Error("no canvas")
@@ -21,6 +19,7 @@ const App = () => {
     const [parsedData, setParsedData] = useState<number[][][] | undefined>(
         undefined
     )
+    const [fuckThis, setFuckThis] = useState<boolean>()
 
     const renderImage = (settings: RenderSettings) => {
         if (parsedData == undefined) return
@@ -80,6 +79,8 @@ const App = () => {
         ctx.strokeStyle = "#CC0099"
         ctx.lineWidth = 2
         ctx.stroke()
+
+        setFuckThis(true)
     }
 
     const processData = (files: FileList) => {
@@ -98,29 +99,27 @@ const App = () => {
             alignSelf={"center"}
             margin={"0 auto"}
         >
-            <TestShader />
             <canvas ref={canvasRef} />
             {parsedData ? (
-                <Box width="70%">
-                    <Typography>{`Loaded ${parsedData!.length} files`}</Typography>
-                    <Stack direction={"column"} alignItems="stretch" spacing="">
-                        <RenderConfiguration
-                            applySettings={settings => {
-                                renderImage(settings)
-                            }}
-                            layerCount={parsedData!.length}
-                        />
-                        <Box height="15px"></Box>
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                SceneRenderer.renderScan()
-                            }}
+                <>
+                    {fuckThis ? <Render3d parsedData={parsedData} /> : <></>}
+                    <Box width="70%">
+                        <Typography>{`Loaded ${parsedData!.length} files`}</Typography>
+                        <Stack
+                            direction={"column"}
+                            alignItems="stretch"
+                            spacing=""
                         >
-                            Generate 3d model
-                        </Button>
-                    </Stack>
-                </Box>
+                            <RenderConfiguration
+                                applySettings={settings => {
+                                    renderImage(settings)
+                                }}
+                                layerCount={parsedData!.length}
+                            />
+                            <Box height="15px"></Box>
+                        </Stack>
+                    </Box>
+                </>
             ) : (
                 <FileSelection setFiles={processData} />
             )}

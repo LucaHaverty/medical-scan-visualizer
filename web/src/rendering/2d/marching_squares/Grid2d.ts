@@ -1,6 +1,6 @@
 import { Vector2 } from "three"
-import Settings from "../Settings"
-import DataParser from "../DataParser"
+import Settings from "../../../Settings"
+import DataParser from "../../../data_input/DataParser"
 import Point2d from "./Point2d"
 
 class Grid2d {

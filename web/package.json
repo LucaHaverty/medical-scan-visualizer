@@ -27,6 +27,7 @@
     "@react-three/fiber": "^8.15.15",
     "@vitest/coverage-v8": "^1.6.0",
     "async-mutex": "^0.5.0",
+    "caniuse-lite": "^1.0.30001689",
     "colord": "^2.9.3",
     "dicom-parser": "^1.8.21",
     "framer-motion": "^10.13.1",

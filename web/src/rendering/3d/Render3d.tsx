@@ -16,7 +16,11 @@ import {
 import vertexShader from "./shaders/vertexShader.glsl"
 import fragmentShader from "./shaders/fragmentShader.glsl"
 
-const TestShader: React.FC = () => {
+interface ShaderProps {
+    parsedData: number[][][]
+}
+
+const Render3d: React.FC<ShaderProps> = ({ parsedData }) => {
     const rendererRef = useRef<WebGLRenderer | null>(null)
 
     // Function to generate a 3D grid of sample data
@@ -34,7 +38,7 @@ const TestShader: React.FC = () => {
                 for (let x = 0; x < width; x++) {
                     const index = x + y * width + z * width * height
                     // Combine noise and density
-                    gridData[index] = Math.random()
+                    gridData[index] = parsedData[x][y][z]
                 }
             }
         }
@@ -44,9 +48,9 @@ const TestShader: React.FC = () => {
 
     useEffect(() => {
         // Grid dimensions (can now be much larger)
-        const gridWidth = 256
-        const gridHeight = 256
-        const gridDepth = 256
+        const gridWidth = 137
+        const gridHeight = 512
+        const gridDepth = 512
 
         // Generate grid data
         const gridData = generateGridData(gridWidth, gridHeight, gridDepth)
@@ -104,9 +108,9 @@ const TestShader: React.FC = () => {
             renderer.dispose()
             texture.dispose()
         }
-    }, [])
+    }, [parsedData])
 
     return null
 }
 
-export default TestShader
+export default Render3d
