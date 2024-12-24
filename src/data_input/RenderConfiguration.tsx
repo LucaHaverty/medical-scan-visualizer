@@ -1,26 +1,19 @@
-import { defaultBrainSettings, RenderSettings } from "@/BrainTypes"
-import { Box, Slider, Typography } from "@mui/material"
-import { FC, useEffect, useState } from "react"
+import { Box, Slider, Typography } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import { defaultBrainSettings, RenderSettings } from "../BrainTypes";
 
 interface RenderConfigurationProps {
-    applySettings: (settings: RenderSettings) => void
-    layerCount: number
+    applySettings: (settings: RenderSettings) => void;
+    layerCount: number;
 }
 
-const RenderConfiguration: FC<RenderConfigurationProps> = ({
-    applySettings,
-    layerCount,
-}) => {
-    const [imageLayer, setImageLayer] = useState<number>(
-        defaultBrainSettings.imageLayer
-    )
-    const [threshold, setThreshold] = useState<number[]>(
-        defaultBrainSettings.threshold
-    )
+const RenderConfiguration: FC<RenderConfigurationProps> = ({ applySettings, layerCount }) => {
+    const [imageLayer, setImageLayer] = useState<number>(defaultBrainSettings.imageLayer);
+    const [threshold, setThreshold] = useState<number[]>(defaultBrainSettings.threshold);
 
     useEffect(() => {
-        applySettings({ threshold: threshold, imageLayer: imageLayer })
-    }, [imageLayer, threshold, applySettings])
+        applySettings({ threshold: threshold, imageLayer: imageLayer });
+    }, [imageLayer, threshold]);
 
     return (
         <>
@@ -42,7 +35,7 @@ const RenderConfiguration: FC<RenderConfigurationProps> = ({
                 valueLabelDisplay="auto"
             />
         </>
-    )
-}
+    );
+};
 
-export default RenderConfiguration
+export default RenderConfiguration;

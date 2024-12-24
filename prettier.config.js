@@ -5,7 +5,7 @@ const config = {
     semi: false,
     singleQuote: false,
     quoteProps: "consistent",
-    jsxSingleQuote: false,
+    jsxSingleQuote: false, 
     bracketSpacing: true,
     bracketSameLine: false,
     arrowParens: "avoid",

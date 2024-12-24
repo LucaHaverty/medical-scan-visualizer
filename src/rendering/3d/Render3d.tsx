@@ -16,12 +16,14 @@ import {
 import vertexShader from "./shaders/vertexShader.glsl"
 import fragmentShader from "./shaders/fragmentShader.glsl"
 
-interface ShaderProps {
+interface Render3dProps {
     parsedData: number[][][]
+    threshold: number
 }
 
-const Render3d: React.FC<ShaderProps> = ({ parsedData }) => {
-    const rendererRef = useRef<WebGLRenderer | null>(null)
+const Render3d: React.FC<Render3dProps> = ({ parsedData, threshold }) => {
+    const rendererRef = useRef<WebGLRenderer | undefined>(undefined)
+    const textureRef = useRef<Data3DTexture | undefined>(undefined)
 
     // Function to generate a 3D grid of sample data
     const generateGridData = (
@@ -48,23 +50,25 @@ const Render3d: React.FC<ShaderProps> = ({ parsedData }) => {
 
     useEffect(() => {
         // Grid dimensions (can now be much larger)
-        const gridWidth = 137
-        const gridHeight = 512
-        const gridDepth = 512
+        const gridWidth = parsedData.length
+        const gridHeight = parsedData[0].length
+        const gridDepth = parsedData[0][0].length
 
-        // Generate grid data
-        const gridData = generateGridData(gridWidth, gridHeight, gridDepth)
+        if (textureRef.current == undefined) {
+            // Generate grid data
+            const gridData = generateGridData(gridWidth, gridHeight, gridDepth)
 
-        // Create 3D texture
-        const texture = new Data3DTexture(
-            gridData,
-            gridWidth,
-            gridHeight,
-            gridDepth
-        )
-        texture.format = RedFormat
-        texture.type = FloatType
-        texture.needsUpdate = true
+            // Create 3D texture
+            textureRef.current = new Data3DTexture(
+                gridData,
+                gridWidth,
+                gridHeight,
+                gridDepth
+            )
+            textureRef.current.format = RedFormat
+            textureRef.current.type = FloatType
+            textureRef.current.needsUpdate = true
+        }
 
         // Basic setup
         const scene = new Scene()
@@ -85,11 +89,11 @@ const Render3d: React.FC<ShaderProps> = ({ parsedData }) => {
             vertexShader,
             fragmentShader,
             uniforms: {
-                time: { value: 0.0 },
+                threshold: { value: threshold },
                 gridDimensions: {
                     value: new Vector3(gridWidth, gridHeight, gridDepth),
                 },
-                gridTexture: { value: texture },
+                gridTexture: { value: textureRef.current },
             },
         })
 
@@ -106,9 +110,9 @@ const Render3d: React.FC<ShaderProps> = ({ parsedData }) => {
         return () => {
             document.body.removeChild(renderer.domElement)
             renderer.dispose()
-            texture.dispose()
+            textureRef.current?.dispose()
         }
-    }, [parsedData])
+    }, [parsedData, threshold])
 
     return null
 }

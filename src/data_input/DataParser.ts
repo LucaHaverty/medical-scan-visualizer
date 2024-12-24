@@ -47,7 +47,7 @@ class DataParser {
                     for (let h = 0; h < height; h++) {
                         for (let w = 0; w < width; w++) {
                             const value = pixelData[h * width + w]
-                            data[h][w] = value
+                            data[h][w] = value / 1.5
                         }
                     }
 
