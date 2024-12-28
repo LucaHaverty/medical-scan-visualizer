@@ -6,9 +6,7 @@ import FileSelection from "./data_input/FileSelection"
 import RenderConfiguration from "./data_input/RenderConfiguration"
 import { RenderSettings } from "./BrainTypes"
 import Render2d from "./rendering/2d/Render2d"
-
-// const canvas = document.getElementById("myCanvas") as HTMLCanvasElement
-// if (!canvas) throw new Error("no canvas")
+import Render3d from "./rendering/3d/Render3d"
 
 const App = () => {
     const [parsedData, setParsedData] = useState<number[][][] | undefined>(
@@ -19,9 +17,11 @@ const App = () => {
     >(undefined)
 
     const processData = (files: FileList) => {
-        DataParser.parseData(files).then(data => {
-            setParsedData(data)
-            DataParser.PARSED_DATA = data
+        DataParser.parseData(files).then(parserResults => {
+            setParsedData(parserResults.data)
+            DataParser.PARSED_DATA = parserResults.data
+
+            console.log("Max value: " + parserResults.maxValue)
         })
     }
 
@@ -35,19 +35,15 @@ const App = () => {
             margin={"0 auto"}
         >
             {renderSettings && parsedData && (
+                <Box display="flex">
                 <Render2d
                     parsedData={parsedData}
                     renderSettings={renderSettings}
                 />
+                <Render3d parsedData={parsedData} renderSettings={renderSettings} />
+                </Box>
             )}
             {parsedData ? (
-                // <>
-                //     {fuckThis && (
-                //         <Render3d
-                //             parsedData={parsedData}
-                //             threshold={renderSettings!.threshold[0]}
-                //         />
-                //     )}
                 <Box width="70%">
                     <Typography>{`Loaded ${parsedData!.length} files`}</Typography>
                     <Stack direction={"column"} alignItems="stretch" spacing="">
@@ -61,7 +57,6 @@ const App = () => {
                     </Stack>
                 </Box>
             ) : (
-                //</>
                 <FileSelection setFiles={processData} />
             )}
         </Box>

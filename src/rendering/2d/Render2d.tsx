@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react"
 import { Vector2 } from "three"
 import Grid2d from "./marching_squares/Grid2d"
 import MeshGenerator from "./marching_squares/MeshGenerator"
-import Settings from "../../Settings"
 import { RenderSettings } from "../../BrainTypes"
 
 interface Render2dProps {
@@ -31,9 +30,8 @@ const Render2d: React.FC<Render2dProps> = ({ parsedData, renderSettings }) => {
         for (let h = 0; h < height; h++) {
             for (let w = 0; w < width; w++) {
                 const index = h * width + w
-                let value = data[w][h]
+                let value = data[w][h] * 255
 
-                value = Math.max(0, Math.min(255, value)) // Clamp to 0-255
                 if (
                     value >= renderSettings.threshold[0] * 255 &&
                     value <= renderSettings.threshold[1] * 255
@@ -51,14 +49,13 @@ const Render2d: React.FC<Render2dProps> = ({ parsedData, renderSettings }) => {
             }
         }
 
-        Settings.SURFACE_CUTOFF = 1 - renderSettings.threshold[0]
         const grid = new Grid2d(
             new Vector2(0, 0),
             new Vector2(512, 512),
             1,
             renderSettings.imageLayer
         )
-        const edgePoints = MeshGenerator.GenerateMesh2(grid)[1]
+        const edgePoints = MeshGenerator.GenerateMesh2(grid, renderSettings)[1]
 
         ctx!.putImageData(imageData, 0, 0)
         ctx.beginPath()

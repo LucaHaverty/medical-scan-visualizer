@@ -3,19 +3,29 @@ import * as dicomParser from "dicom-parser"
 class DataParser {
     public static PARSED_DATA: number[][][]
 
-    public static async parseData(folder: FileList): Promise<number[][][]> {
+    public static async parseData(
+        folder: FileList
+    ): Promise<{ data: number[][][]; maxValue: number }> {
         const data: number[][][] = new Array(folder.length)
 
+        let maxValue: number = 0
+
         for (let layer = 0; layer < folder.length; layer++) {
-            await DataParser.parseLayer(folder[layer]).then(layerData => {
-                data[layer] = layerData
+            await DataParser.parseLayer(folder[layer]).then(layerResults => {
+                data[layer] = layerResults.data
+
+                if (layerResults.maxValue > maxValue) {
+                    maxValue = layerResults.maxValue
+                }
             })
         }
 
-        return data
+        return { data: data, maxValue: maxValue }
     }
 
-    public static parseLayer(file: File): Promise<number[][]> {
+    public static parseLayer(
+        file: File
+    ): Promise<{ data: number[][]; maxValue: number }> {
         return new Promise((resolve, reject) => {
             const reader = new FileReader()
 
@@ -44,14 +54,20 @@ class DataParser {
                         () => new Array(width)
                     )
 
+                    let maxValue: number = 0
+
                     for (let h = 0; h < height; h++) {
                         for (let w = 0; w < width; w++) {
                             const value = pixelData[h * width + w]
-                            data[h][w] = value / 1.5
+                            data[h][w] = value / 679.0
+
+                            if (value > maxValue) {
+                                maxValue = value
+                            }
                         }
                     }
 
-                    resolve(data)
+                    resolve({ data: data, maxValue: maxValue })
                 } catch (error) {
                     reject(new Error("Error parsing DICOM file: " + error))
                 }

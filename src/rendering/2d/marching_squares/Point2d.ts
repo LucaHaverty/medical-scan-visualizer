@@ -1,22 +1,15 @@
 import { Vector2, Vector3 } from "three"
 
-class Point {
+class Point2d {
     arrayPos: Vector2
     worldPos: Vector2
-    pointData: Vector3
-    inGround: boolean
+    value: Vector3
 
-    constructor(
-        arrayPos: Vector2,
-        worldPos: Vector2,
-        noiseValue: number,
-        surfaceCutoff: number
-    ) {
+    constructor(arrayPos: Vector2, worldPos: Vector2, value: number) {
         this.arrayPos = arrayPos
         this.worldPos = worldPos
-        this.pointData = new Vector3(worldPos.x, worldPos.y, noiseValue)
-        this.inGround = noiseValue < surfaceCutoff
+        this.value = new Vector3(worldPos.x, worldPos.y, value)
     }
 }
 
-export default Point
+export default Point2d

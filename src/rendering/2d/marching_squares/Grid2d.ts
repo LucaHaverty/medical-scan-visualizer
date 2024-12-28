@@ -1,5 +1,4 @@
 import { Vector2 } from "three"
-import Settings from "../../../Settings"
 import DataParser from "../../../data_input/DataParser"
 import Point2d from "./Point2d"
 
@@ -20,7 +19,7 @@ class Grid2d {
         this._pointSpacing = pointSpacing
 
         // TODO: Load sample rate from some sort of settings
-        const sampleRate = Settings.PIXEL_SAMPLE_RATE
+        const sampleRate = 1
 
         gridSize = gridSize.divideScalar(sampleRate).floor()
         this.gridSize = gridSize
@@ -42,16 +41,14 @@ class Grid2d {
                     1 -
                     DataParser.PARSED_DATA[layer][x * sampleRate][
                         y * sampleRate
-                    ] /
-                        255.0
+                    ]
 
                 //pointValue = Math.random()
 
                 this.points[x][y] = new Point2d(
                     new Vector2(x, y),
                     pointWorldPos,
-                    pointValue,
-                    Settings.SURFACE_CUTOFF
+                    pointValue
                 )
             }
         }
