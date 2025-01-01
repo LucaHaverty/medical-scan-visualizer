@@ -6,8 +6,8 @@ uniform sampler3D gridTexture;
 varying vec2 vUv;
 
 // Precompute constants to avoid repeated calculations
-const float MAX_STEPS = 200.0;
-const float STEP_SIZE = 1.0;
+const float MAX_STEPS = 400.0;
+const float STEP_SIZE = 0.5;
 const vec3 THRESHOLD_COLOR = vec3(1.0, 0.0, 0.0);
 
 vec3 worldToCell(vec3 worldPos) { return floor(worldPos); }
@@ -41,18 +41,15 @@ vec3 applyRotation(vec3 p, vec4 r) {
   return result;
 }
 
-void main() {
-  // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-  // return;
+float castRay(vec3 origin, vec3 direction) { return 0.0; }
 
-  // Precompute constants used in the loop
-  // TODO: old absolute controls, new orbital controls below
+void main() {
   vec2 scaledUv = vUv * 2.0 - 1.0;
-  vec3 origin = vec3(-gridDimensions.x * 1.5, gridDimensions.y * 0.5,
+  vec3 origin = vec3(-gridDimensions.x * 2.0, gridDimensions.y * 0.5,
                      gridDimensions.z * 0.5);
 
-  vec3 offset = vec3(-gridDimensions.x * 0.5, -gridDimensions.y * 0.5,
-                     -gridDimensions.z * 0.5);
+  // vec3 offset = vec3(-gridDimensions.x * 4.0, -gridDimensions.y * 0.5,
+  //  -gridDimensions.z * 0.5);
 
   vec2 viewAngle = vec2(60.0, 60.0);
 
@@ -67,10 +64,10 @@ void main() {
   vec3 invGridDimensions = 1.0 / gridDimensions;
 
   // Calculate maximum distance based on grid size
-  float maxDist = gridDimensions.x * 3.0;
+  float maxDist = gridDimensions.x * 50.0;
 
   vec3 color = vec3(0.0);
-  float steps = 0.0;
+  int steps = 0;
 
   // Main raymarching loop
   for (float t = 0.0; t < maxDist; t += STEP_SIZE) {
@@ -93,9 +90,8 @@ void main() {
                  ? vec3(density * 5.0, 0.0, 0.0)
                  : vec3(density * 0.7);
 
-    steps += 1.0;
+    steps++;
   }
 
-  // Normalize color by actual number of steps taken
-  gl_FragColor = vec4(color / 100.0 * (STEP_SIZE), 1.0);
+  gl_FragColor = vec4(color / 50.0 * (STEP_SIZE), 1.0);
 }

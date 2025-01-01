@@ -4,7 +4,7 @@ import DataParser from "./data_input/DataParser"
 
 import FileSelection from "./data_input/FileSelection"
 import RenderConfiguration from "./data_input/RenderConfiguration"
-import { RenderSettings } from "./BrainTypes"
+import { RenderSettings } from "./DataTypes"
 import Render2d from "./rendering/2d/Render2d"
 import Render3d from "./rendering/3d/Render3d"
 
@@ -22,6 +22,7 @@ const App = () => {
             DataParser.PARSED_DATA = parserResults.data
 
             console.log("Max value: " + parserResults.maxValue)
+            console.log("Min value: " + parserResults.minValue)
         })
     }
 

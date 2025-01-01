@@ -1,6 +1,6 @@
 import { Box, Slider, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import { defaultBrainSettings, RenderSettings } from "../BrainTypes";
+import { defaultRenderSettings, RenderSettings } from "../DataTypes";
 
 interface RenderConfigurationProps {
     applySettings: (settings: RenderSettings) => void;
@@ -8,8 +8,8 @@ interface RenderConfigurationProps {
 }
 
 const RenderConfiguration: FC<RenderConfigurationProps> = ({ applySettings, layerCount }) => {
-    const [imageLayer, setImageLayer] = useState<number>(defaultBrainSettings.imageLayer);
-    const [threshold, setThreshold] = useState<number[]>(defaultBrainSettings.threshold);
+    const [imageLayer, setImageLayer] = useState<number>(defaultRenderSettings.imageLayer);
+    const [threshold, setThreshold] = useState<number[]>(defaultRenderSettings.threshold);
 
     useEffect(() => {
         applySettings({ threshold: threshold, imageLayer: imageLayer });

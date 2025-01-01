@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import { Vector2 } from "three"
 import Grid2d from "./marching_squares/Grid2d"
 import MeshGenerator from "./marching_squares/MeshGenerator"
-import { RenderSettings } from "../../BrainTypes"
+import { RenderSettings } from "../../DataTypes"
 
 interface Render2dProps {
     parsedData: number[][][]

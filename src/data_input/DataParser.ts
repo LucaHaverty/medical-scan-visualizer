@@ -1,31 +1,55 @@
 import * as dicomParser from "dicom-parser"
+import { ParsedData } from "../DataTypes"
 
 class DataParser {
     public static PARSED_DATA: number[][][]
 
-    public static async parseData(
-        folder: FileList
-    ): Promise<{ data: number[][][]; maxValue: number }> {
-        const data: number[][][] = new Array(folder.length)
+    public static async parseData(folder: FileList): Promise<ParsedData> {
+        // Read data into array from DICOM files
 
-        let maxValue: number = 0
+        let rawData: number[][][] = new Array(folder.length)
 
         for (let layer = 0; layer < folder.length; layer++) {
-            await DataParser.parseLayer(folder[layer]).then(layerResults => {
-                data[layer] = layerResults.data
-
-                if (layerResults.maxValue > maxValue) {
-                    maxValue = layerResults.maxValue
-                }
+            await DataParser.parseLayer(folder[layer]).then(layerData => {
+                rawData[layer] = layerData
             })
         }
 
-        return { data: data, maxValue: maxValue }
+        // Find min and max values
+
+        let min = Infinity
+        let max = -Infinity
+
+        for (const layer of rawData) {
+            for (const row of layer) {
+                for (const value of row) {
+                    min = Math.min(min, value)
+                    max = Math.max(max, value)
+                }
+            }
+        }
+
+        // Scale data between 0 and 1
+
+        const scaledData = new Array(rawData.length)
+        for (let i = 0; i < rawData.length; i++) {
+            scaledData[i] = new Array(rawData[i].length)
+            for (let j = 0; j < rawData[i].length; j++) {
+                scaledData[i][j] = new Array(rawData[i][j].length)
+                for (let k = 0; k < rawData[i][j].length; k++) {
+                    scaledData[i][j][k] = (rawData[i][j][k] - min) / (max - min)
+                }
+            }
+        }
+
+        rawData = rawData.map(layer =>
+            layer.map(row => row.map(value => (value - min) / (max - min)))
+        )
+
+        return { data: scaledData, maxValue: max, minValue: min }
     }
 
-    public static parseLayer(
-        file: File
-    ): Promise<{ data: number[][]; maxValue: number }> {
+    public static parseLayer(file: File): Promise<number[][]> {
         return new Promise((resolve, reject) => {
             const reader = new FileReader()
 
@@ -54,20 +78,14 @@ class DataParser {
                         () => new Array(width)
                     )
 
-                    let maxValue: number = 0
-
                     for (let h = 0; h < height; h++) {
                         for (let w = 0; w < width; w++) {
                             const value = pixelData[h * width + w]
-                            data[h][w] = value / 679.0
-
-                            if (value > maxValue) {
-                                maxValue = value
-                            }
+                            data[h][w] = value
                         }
                     }
 
-                    resolve({ data: data, maxValue: maxValue })
+                    resolve(data)
                 } catch (error) {
                     reject(new Error("Error parsing DICOM file: " + error))
                 }

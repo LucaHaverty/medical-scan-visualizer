@@ -4,7 +4,7 @@ import { Vector2, Vector3, Vector4 } from "three"
 import LookupTables from "./LookupTables"
 import Grid2d from "./Grid2d"
 import { lerp } from "three/src/math/MathUtils.js"
-import { RenderSettings } from "../../../BrainTypes"
+import { RenderSettings } from "../../../DataTypes"
 
 type Triangle2 = {
     a?: Vector2
